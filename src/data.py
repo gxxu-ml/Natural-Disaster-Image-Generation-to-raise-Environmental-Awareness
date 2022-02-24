@@ -1,42 +1,61 @@
 import os
 from PIL import Image
+from functools import partial
 
-import torchvision.transforms as transforms
+import torch
+import pandas as pd
 import pytorch_lightning as pl
+import torchvision.transforms as T
 
-from torch.utils.data import DataLoader
+from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.distributed import DistributedSampler
-
-from open_clip.training.data import CsvDataset
-from vqgan.taming.data.utils import custom_collate
-from vqgan.main import instantiate_from_config
 
 
 # TODO make data_dir configurable
 # TODO make sep configurable for dalle, glide
-class CustomDataset(CsvDataset):
+class CustomDataset(Dataset):
     """
     Dataset to load images,captions from image-caption mapping file
     """
-    def __init__(self, input_filename, transform, img_key,
-                    caption_key, tokenize=None, data_dir="../data", sep=" "):
-        # super().__init__(os.path.abspath(input_filename), transform, img_key, caption_key, sep)
-        super().__init__(input_filename, transform, img_key, caption_key, sep)
+    def __init__(self, input_filename, transforms, img_key, caption_key,
+                 tokenize=None, data_dir="../data", sep=" ", permute=False):
+        super().__init__()
+        df = pd.read_csv(input_filename, sep=sep)
+
+        self.images = df[img_key].tolist()
+        self.captions = None
+        if caption_key in df.columns:
+            self.captions = df[caption_key].tolist()
         self.data_dir = data_dir
         self.tokenize = tokenize
-        # TODO remove this block
-        if self.transforms is None:
-            self.transforms = transforms.Compose([
-                                transforms.Resize(256),
-                                transforms.RandomCrop(256),
-                                transforms.ToTensor()])
+
+        self.transforms = transforms
+        assert self.transforms is not None
+        # T.ToTensor() -> C x H x W format
+        # in case need H x W x C format back
+        self.permute = permute
+
+        self.post_init()
+
+    def post_init(self):
+        pass
+
+    def __len__(self):
+        return len(self.images)
 
     def __getitem__(self, idx):
-        images = self.transforms(Image.open(
+        image = self.transforms(Image.open(
             os.path.join(self.data_dir, str(self.images[idx]))))
-        text = open(os.path.join(self.data_dir, str(self.captions[idx])), 'r').read()
-        texts = self.tokenize([text])[0]
-        return images, texts
+        if self.permute:
+            image = image.permute(1, 2, 0)
+
+        if self.captions:
+            text = open(os.path.join(self.data_dir, str(self.captions[idx])), 'r').read()
+            text = self.tokenize(text)
+            if not torch.is_tensor(text):
+                text = torch.tensor(text)
+            return image, text.squeeze()
+        return image
 
 
 # TODO hardcoded image key
@@ -44,13 +63,13 @@ class ImageDataset(CustomDataset):
     """
     Dataset to load images from image-caption mapping file
     """
-    def __len__(self):
-        return len(self.images)
+    def post_init(self):
+        self.transforms = eval(self.transforms)
 
     def __getitem__(self, idx):
-        images = Image.open(
+        image = Image.open(
             os.path.join(self.data_dir, str(self.images[idx])))
-        return {"image": self.transforms(images).permute(1, 2, 0)}
+        return {"image": self.transforms(image).permute(1, 2, 0)}
 
 
 class CustomDataModule(pl.LightningDataModule):
@@ -72,8 +91,6 @@ class CustomDataModule(pl.LightningDataModule):
         self.train_filename = train_filename
         self.valid_filename = valid_filename
 
-        # self.train_transform = _transform(image_resolution, True)
-        # self.valid_transform = _transform(image_resolution, False)
         self.dataset_configs = dict()
         self.setup_fn = dict()
         if train_filename is not None:
@@ -90,7 +107,6 @@ class CustomDataModule(pl.LightningDataModule):
             self.setup_fn["test"] = valid_setup_fn
 
         self.num_workers = num_workers
-        self.setup_fn = CustomDataset if setup_fn is None else setup_fn
         self.collate_fn = collate_fn
         self.pin_memory = pin_memory
 
@@ -125,6 +141,8 @@ class CustomDataModule(pl.LightningDataModule):
 class ImageDataModule(CustomDataModule):
     def __init__(self, batch_size, train=None, validation=None,
                  test=None, wrap=False, num_workers=None):
+        from vqgan.main import instantiate_from_config
+        from vqgan.taming.data.utils import custom_collate
         super().__init__(
                  train_batch_size=batch_size,
                  valid_batch_size=batch_size,
@@ -139,10 +157,11 @@ class ImageDataModule(CustomDataModule):
 
         self.batch_size = batch_size
         self.val_dataloader = self._valid_dataloader
+        self.instantiate_from_config_ = instantiate_from_config
 
     def prepare_data(self):
         for data_cfg in self.dataset_configs.values():
-            instantiate_from_config(data_cfg)
+            self.instantiate_from_config_(data_cfg)
 
 
 def get_clip_data(args, preprocess_fns):
@@ -187,27 +206,33 @@ def get_clip_data(args, preprocess_fns):
         data["val"] = get_custom_dataset(args, preprocess_val, is_train=False)
     return data
 
-# NOTE dalle tokenizer arg is part of model config
-# model.tokenizer should be built first, then tokenize here is model.tokenizer.encode
 # TODO shuffle arg for dalle dataloader
-# TODO need to figure out how to handle transforms properly
 def get_dalle_data(args, preprocess_fns, tokenize):
     preprocess_train, preprocess_val = preprocess_fns
+    if tokenize is None:
+        from dalle.dalle.models.tokenizer import build_tokenizer
+        # TODO configurable tokenizer path
+        _tokenizer = build_tokenizer('dalle/tokenizer',
+                                     lowercase=True,
+                                     dropout=None)
+        def _tokenize(x):
+            return _tokenizer.encode(x).ids
+        tokenize = _tokenize
 
-    def setup_fn(transform, input_filename):
-        return CustomDataset(input_filename, transform, args.img_key,
-                             args.caption_key, tokenize, args.data_dir, args.csv_separator)
+    def setup_fn(transforms, input_filename):
+        return CustomDataset(input_filename, transforms, args.img_key, args.caption_key,
+                             tokenize, args.data_dir, args.csv_separator, args.permute)
 
     return CustomDataModule(args.train_batch_size, args.valid_batch_size,
                             args.train_filename, args.valid_filename,
-                            train_setup_fn=setup_fn(preprocess_train),
-                            valid_setup_fn=setup_fn(preprocess_val), pin_memory=True)
+                            train_setup_fn=partial(setup_fn, preprocess_train),
+                            valid_setup_fn=partial(setup_fn, preprocess_val), pin_memory=True)
 
 def get_data(args, preprocess_fns, model_type, tokenize=None):
     if model_type == 'clip':
         return get_clip_data(args, preprocess_fns)
     elif model_type == 'dalle':
-        assert tokenize is not None, "dalle tokenizer is part of model config"
+        # assert tokenize is not None, "dalle tokenizer is part of model config"
         return get_dalle_data(args, preprocess_fns, tokenize)
     elif model_type == 'glide':
         raise NotImplementedError
