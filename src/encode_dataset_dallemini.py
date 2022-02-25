@@ -22,8 +22,8 @@ save_frequency = 128  # Number of batches to create a new file (180MB for f16 an
 #================================================
 data_dir = "../data"
 data_files = {
-    "train": os.path.join(data_dir, 'train.txt2'),
-    "validation": os.path.join(data_dir, 'validation.txt2')
+    "train": os.path.join(data_dir, 'train.txt'),
+    "validation": os.path.join(data_dir, 'validation.txt')
 }
 delimiter = " "
 
@@ -45,16 +45,17 @@ def process(_transforms, ex):
     ex['captions'] = [open(txt).read() for txt in ex['captions']]
     return ex
 
-# data.set_format(type='torch', columns=['images', 'captions'])
-data['train'].set_transform(partial(process, transforms)),
+# in case we want to set different transforms for train and validation
+data['train'].set_transform(partial(process, transforms))
 train_loader = DataLoader(
     data['train'],
     batch_size=batch_size,
     num_workers=num_workers
 )
 
+data['validation'].set_transform(partial(process, transforms))
 valid_loader = DataLoader(
-    data['validation'].set_transform(partial(process, transforms)),
+    data['validation'],
     batch_size=batch_size,
     num_workers=num_workers
 )
