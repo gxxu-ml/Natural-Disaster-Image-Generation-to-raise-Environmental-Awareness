@@ -1138,7 +1138,6 @@ multimodal/damaged_infrastructure/images/wreckedcar_2017-01-04_10-40-46.jpg mult
 multimodal/flood/images/floodwater_2017-08-11_07-32-50.jpg multimodal/flood/text/floodwater_2017-08-11_07-32-50.txt
 multimodal/damaged_nature/images/drought_2017-11-12_23-22-05.jpg multimodal/damaged_nature/text/drought_2017-11-12_23-22-05.txt
 multimodal/damaged_nature/images/treesfalling_2017-08-08_07-17-21.jpg multimodal/damaged_nature/text/treesfalling_2017-08-08_07-17-21.txt
-multimodal/non_damage/images/building_2017-10-30_17-03-17.jpg multimodal/non_damage/text/building_2017-10-30_17-03-17.txt
 multimodal/non_damage/images/nature_2017-10-30_21-53-29.jpg multimodal/non_damage/text/nature_2017-10-30_21-53-29.txt
 multimodal/damaged_infrastructure/images/terrorattack_2017-10-16_20-25-09.jpg multimodal/damaged_infrastructure/text/terrorattack_2017-10-16_20-25-09.txt
 multimodal/damaged_infrastructure/images/wreckedcar_2017-01-04_10-53-38.jpg multimodal/damaged_infrastructure/text/wreckedcar_2017-01-04_10-53-38.txt
@@ -3791,7 +3790,6 @@ multimodal/non_damage/images/ad_2017-11-25_08-03-51.jpg multimodal/non_damage/te
 multimodal/non_damage/images/nature_2017-10-30_21-52-53.jpg multimodal/non_damage/text/nature_2017-10-30_21-52-53.txt
 multimodal/damaged_nature/images/drought_2017-11-08_00-28-22.jpg multimodal/damaged_nature/text/drought_2017-11-08_00-28-22.txt
 multimodal/non_damage/images/ad_2017-11-25_10-06-39.jpg multimodal/non_damage/text/ad_2017-11-25_10-06-39.txt
-multimodal/non_damage/images/building_2017-10-30_17-03-51.jpg multimodal/non_damage/text/building_2017-10-30_17-03-51.txt
 multimodal/damaged_infrastructure/images/terrorattack_2017-11-01_20-15-07.jpg multimodal/damaged_infrastructure/text/terrorattack_2017-11-01_20-15-07.txt
 multimodal/non_damage/images/building_2017-10-30_17-06-16.jpg multimodal/non_damage/text/building_2017-10-30_17-06-16.txt
 multimodal/fires/images/buildingfire_2016-09-30_06-38-51.jpg multimodal/fires/text/buildingfire_2016-09-30_06-38-51.txt
@@ -4104,7 +4102,6 @@ multimodal/non_damage/images/ad_2017-11-25_06-23-52.jpg multimodal/non_damage/te
 multimodal/non_damage/images/building_2017-10-30_17-17-25.jpg multimodal/non_damage/text/building_2017-10-30_17-17-25.txt
 multimodal/damaged_infrastructure/images/wreckedcar_2017-10-20_14-02-05.jpg multimodal/damaged_infrastructure/text/wreckedcar_2017-10-20_14-02-05.txt
 multimodal/damaged_nature/images/treesfalling_2013-04-12_19-46-46.jpg multimodal/damaged_nature/text/treesfalling_2013-04-12_19-46-46.txt
-multimodal/damaged_infrastructure/images/wreckedcar_2017-02-23_21-15-25.jpg multimodal/damaged_infrastructure/text/wreckedcar_2017-02-23_21-15-25.txt
 multimodal/non_damage/images/ad_2017-11-25_02-40-27.jpg multimodal/non_damage/text/ad_2017-11-25_02-40-27.txt
 multimodal/non_damage/images/food_2017-11-23_23-11-14.jpg multimodal/non_damage/text/food_2017-11-23_23-11-14.txt
 multimodal/damaged_nature/images/landslide_2017-10-10_23-18-16.jpg multimodal/damaged_nature/text/landslide_2017-10-10_23-18-16.txt
@@ -4116,7 +4113,6 @@ multimodal/human_damage/images/isiscrimes_2015-08-21_05-20-04.jpg multimodal/hum
 multimodal/flood/images/hurricanematthew_2017-10-09_19-48-35.jpg multimodal/flood/text/hurricanematthew_2017-10-09_19-48-35.txt
 multimodal/non_damage/images/ad_2017-11-25_02-57-32.jpg multimodal/non_damage/text/ad_2017-11-25_02-57-32.txt
 multimodal/non_damage/images/nature_2017-10-30_17-45-55.jpg multimodal/non_damage/text/nature_2017-10-30_17-45-55.txt
-multimodal/non_damage/images/building_2017-10-30_17-02-49.jpg multimodal/non_damage/text/building_2017-10-30_17-02-49.txt
 multimodal/non_damage/images/ad_2017-11-25_06-17-41.jpg multimodal/non_damage/text/ad_2017-11-25_06-17-41.txt
 multimodal/fires/images/naturaldisaster_2017-10-25_15-39-10.jpg multimodal/fires/text/naturaldisaster_2017-10-25_15-39-10.txt
 multimodal/non_damage/images/building_2017-10-30_17-47-31.jpg multimodal/non_damage/text/building_2017-10-30_17-47-31.txt
@@ -4130,7 +4126,6 @@ multimodal/damaged_nature/images/drought_2017-11-22_00-23-16.jpg multimodal/dama
 multimodal/damaged_infrastructure/images/wreckedcar_2017-08-31_15-57-08.jpg multimodal/damaged_infrastructure/text/wreckedcar_2017-08-31_15-57-08.txt
 multimodal/flood/images/hurricanesandy_2017-10-30_01-51-15.jpg multimodal/flood/text/hurricanesandy_2017-10-30_01-51-15.txt
 multimodal/damaged_nature/images/drought_2017-11-22_09-26-34.jpg multimodal/damaged_nature/text/drought_2017-11-22_09-26-34.txt
-multimodal/non_damage/images/ad_2017-11-25_06-11-43.jpg multimodal/non_damage/text/ad_2017-11-25_06-11-43.txt
 multimodal/damaged_nature/images/sandydamage_2012-10-30_23-09-29.jpg multimodal/damaged_nature/text/sandydamage_2012-10-30_23-09-29.txt
 multimodal/damaged_infrastructure/images/earthquake_2017-11-13_23-40-46.jpg multimodal/damaged_infrastructure/text/earthquake_2017-11-13_23-40-46.txt
 multimodal/flood/images/floodwater_2017-08-31_21-37-09.jpg multimodal/flood/text/floodwater_2017-08-31_21-37-09.txt

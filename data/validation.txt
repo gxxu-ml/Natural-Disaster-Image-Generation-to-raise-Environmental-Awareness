@@ -889,7 +889,6 @@ multimodal/damaged_nature/images/hurricanematthew_2017-11-12_16-33-09.jpg multim
 multimodal/damaged_nature/images/treesfalling_2016-05-19_00-31-46.jpg multimodal/damaged_nature/text/treesfalling_2016-05-19_00-31-46.txt
 multimodal/flood/images/floodwater_2017-07-15_08-47-57.jpg multimodal/flood/text/floodwater_2017-07-15_08-47-57.txt
 multimodal/damaged_infrastructure/images/disasters_2017-11-01_04-41-51.jpg multimodal/damaged_infrastructure/text/disasters_2017-11-01_04-41-51.txt
-multimodal/damaged_infrastructure/images/naturaldisaster_2017-10-13_14-00-04.jpg multimodal/damaged_infrastructure/text/naturaldisaster_2017-10-13_14-00-04.txt
 multimodal/fires/images/buildingfire_2016-10-02_03-07-17.jpg multimodal/fires/text/buildingfire_2016-10-02_03-07-17.txt
 multimodal/non_damage/images/ad_2017-11-25_02-36-15.jpg multimodal/non_damage/text/ad_2017-11-25_02-36-15.txt
 multimodal/non_damage/images/ad_2017-11-25_04-02-46.jpg multimodal/non_damage/text/ad_2017-11-25_04-02-46.txt
@@ -1147,7 +1146,6 @@ multimodal/non_damage/images/nature_2017-10-30_17-48-03.jpg multimodal/non_damag
 multimodal/damaged_infrastructure/images/earthquake_2017-11-13_05-59-22.jpg multimodal/damaged_infrastructure/text/earthquake_2017-11-13_05-59-22.txt
 multimodal/flood/images/naturaldisaster_2017-10-16_06-52-18.jpg multimodal/flood/text/naturaldisaster_2017-10-16_06-52-18.txt
 multimodal/non_damage/images/ad_2017-11-25_04-58-00.jpg multimodal/non_damage/text/ad_2017-11-25_04-58-00.txt
-multimodal/damaged_infrastructure/images/wreckedcar_2017-09-24_20-57-50.jpg multimodal/damaged_infrastructure/text/wreckedcar_2017-09-24_20-57-50.txt
 multimodal/fires/images/buildingfire_2017-06-15_01-57-21.jpg multimodal/fires/text/buildingfire_2017-06-15_01-57-21.txt
 multimodal/damaged_infrastructure/images/earthquake_2017-11-13_20-43-44.jpg multimodal/damaged_infrastructure/text/earthquake_2017-11-13_20-43-44.txt
 multimodal/damaged_nature/images/sandydamage_2013-11-30_16-28-30.jpg multimodal/damaged_nature/text/sandydamage_2013-11-30_16-28-30.txt
