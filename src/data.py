@@ -57,6 +57,22 @@ class CustomDataset(Dataset):
             return image, text.squeeze()
         return image
 
+class GeneralCustomDataset(CustomDataset):
+    def __getitem__(self, idx):
+        image = Image.open(os.path.join(self.data_dir, str(self.images[idx])))
+        if self.transforms is not None:
+            image = self.transforms(image)
+        if self.permute:
+            image = image.permute(1, 2, 0)
+
+        if self.captions:
+            text = open(os.path.join(self.data_dir, str(self.captions[idx])), 'r').read()
+            cond = self.tokenize(text) # returns a dict
+            cond = {k: v if torch.is_tensor(v) else torch.tensor(v)
+                    for k, v in cond.items()}
+            return image, cond
+        else:
+            return image
 
 # TODO hardcoded image key
 class ImageDataset(CustomDataset):
@@ -228,6 +244,27 @@ def get_dalle_data(args, preprocess_fns, tokenize):
                             train_setup_fn=partial(setup_fn, preprocess_train),
                             valid_setup_fn=partial(setup_fn, preprocess_val), pin_memory=True)
 
+def get_glide_data(args, preprocess_fns, tokenize):
+    preprocess_train, preprocess_val = preprocess_fns
+    
+    def setup_fn(transforms, input_filename):
+        return GeneralCustomDataset(input_filename, transforms, args.img_key, args.caption_key,
+                                    tokenize, args.data_dir, args.csv_separator, args.permute)
+
+    def collate_fn(data):
+        batch, conds = zip(*data)
+        batch = torch.stack(batch, dim=0)
+        ks = conds[0].keys()
+        conds = {k: torch.stack([cond[k] for cond in conds], dim=0) 
+                 for k in ks}
+        return batch, conds
+    
+    return CustomDataModule(args.train_batch_size, args.valid_batch_size,
+                            args.train_filename, args.valid_filename,
+                            train_setup_fn=partial(setup_fn, preprocess_train),
+                            valid_setup_fn=partial(setup_fn, preprocess_val), 
+                            pin_memory=True, collate_fn=collate_fn)
+
 def get_data(args, preprocess_fns, model_type, tokenize=None):
     if model_type == 'clip':
         return get_clip_data(args, preprocess_fns)
@@ -235,7 +272,7 @@ def get_data(args, preprocess_fns, model_type, tokenize=None):
         # assert tokenize is not None, "dalle tokenizer is part of model config"
         return get_dalle_data(args, preprocess_fns, tokenize)
     elif model_type == 'glide':
-        raise NotImplementedError
+        return get_glide_data(args, preprocess_fns, tokenize)
     else:
         print("either get_data method is not implemented or you shouldn't be using it")
         raise NotImplementedError
