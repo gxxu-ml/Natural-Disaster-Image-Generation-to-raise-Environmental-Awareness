@@ -21,7 +21,6 @@ class CustomDataset(Dataset):
                  tokenize=None, data_dir="../data", sep=" ", permute=False):
         super().__init__()
         df = pd.read_csv(input_filename, sep=sep)
-
         self.images = df[img_key].tolist()
         self.captions = None
         if caption_key in df.columns:
@@ -259,7 +258,7 @@ def get_glide_data(args, preprocess_fns, tokenize):
                  for k in ks}
         return batch, conds
     
-    return CustomDataModule(args.train_batch_size, args.valid_batch_size,
+    return CustomDataModule(args.batch_size, args.batch_size,
                             args.train_filename, args.valid_filename,
                             train_setup_fn=partial(setup_fn, preprocess_train),
                             valid_setup_fn=partial(setup_fn, preprocess_val), 
