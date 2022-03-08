@@ -1,6 +1,7 @@
 import os
 from PIL import Image
 from functools import partial
+import numpy as np
 
 import torch
 import pandas as pd
@@ -9,6 +10,50 @@ import torchvision.transforms as T
 
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.distributed import DistributedSampler
+
+class CenterCropLongEdge(object):
+    """Crops the given PIL Image on the long edge.
+    Args:
+      size (sequence or int): Desired output size of the crop. If size is an
+          int instead of sequence like (h, w), a square crop (size, size) is
+          made.
+    """
+    def __call__(self, img):
+        """
+        Args:
+            img (PIL Image): Image to be cropped.
+        Returns:
+            PIL Image: Cropped image.
+        """
+        return T.functional.center_crop(img, min(img.size))
+
+    def __repr__(self):
+        return self.__class__.__name__
+
+class RandomCropLongEdge(object):
+    """Crops the given PIL Image on the long edge with a random start point.
+    Args:
+      size (sequence or int): Desired output size of the crop. If size is an
+          int instead of sequence like (h, w), a square crop (size, size) is
+          made.
+    """
+    def __call__(self, img):
+        """
+        Args:
+            img (PIL Image): Image to be cropped.
+        Returns:
+            PIL Image: Cropped image.
+        """
+        size = (min(img.size), min(img.size))
+        # Only step forward along this edge if it's the long edge
+        i = (0 if size[0] == img.size[0] 
+              else np.random.randint(low=0,high=img.size[0] - size[0]))
+        j = (0 if size[1] == img.size[1]
+              else np.random.randint(low=0,high=img.size[1] - size[1]))
+        return T.functional.crop(img, i, j, size[0], size[1])
+
+    def __repr__(self):
+        return self.__class__.__name__
 
 
 # TODO make data_dir configurable
@@ -57,6 +102,20 @@ class CustomDataset(Dataset):
         return image
 
 class GeneralCustomDataset(CustomDataset):
+    def __init__(self, input_filename, transforms, img_key, caption_key,
+                 tokenize=None, data_dir="../data", sep=" ", permute=False,
+                 shard=0, num_shards=1):
+        super().__init__(input_filename, transforms, img_key, caption_key,
+                         tokenize, data_dir, sep, permute)
+        
+        # sharding data for DDP
+        l = len(self.images)
+        start_index = int(shard / num_shards * l)
+        end_index = int((shard + 1) / num_shards * l)
+        self.images = self.images[start_index:end_index]
+        self.captions = self.captions[start_index:end_index]
+        # print(start_index, end_index)
+        
     def __getitem__(self, idx):
         image = Image.open(os.path.join(self.data_dir, str(self.images[idx])))
         if self.transforms is not None:
@@ -179,7 +238,7 @@ class ImageDataModule(CustomDataModule):
             self.instantiate_from_config_(data_cfg)
 
 
-def get_clip_data(args, preprocess_fns):
+def get_clip_data(args, preprocess_fns, **kwargs):
     from open_clip.clip.clip import tokenize
     from open_clip.training.data import DataInfo
 
@@ -222,7 +281,7 @@ def get_clip_data(args, preprocess_fns):
     return data
 
 # TODO shuffle arg for dalle dataloader
-def get_dalle_data(args, preprocess_fns, tokenize):
+def get_dalle_data(args, preprocess_fns, tokenize, **kwargs):
     preprocess_train, preprocess_val = preprocess_fns
     if tokenize is None:
         from dalle.dalle.models.tokenizer import build_tokenizer
@@ -243,12 +302,13 @@ def get_dalle_data(args, preprocess_fns, tokenize):
                             train_setup_fn=partial(setup_fn, preprocess_train),
                             valid_setup_fn=partial(setup_fn, preprocess_val), pin_memory=True)
 
-def get_glide_data(args, preprocess_fns, tokenize):
+def get_glide_data(args, preprocess_fns, tokenize, shard=0, num_shards=1, **kwargs):
     preprocess_train, preprocess_val = preprocess_fns
     
     def setup_fn(transforms, input_filename):
         return GeneralCustomDataset(input_filename, transforms, args.img_key, args.caption_key,
-                                    tokenize, args.data_dir, args.csv_separator, args.permute)
+                                    tokenize, args.data_dir, args.csv_separator, args.permute,
+                                    shard, num_shards)
 
     def collate_fn(data):
         batch, conds = zip(*data)
@@ -264,14 +324,14 @@ def get_glide_data(args, preprocess_fns, tokenize):
                             valid_setup_fn=partial(setup_fn, preprocess_val), 
                             pin_memory=True, collate_fn=collate_fn)
 
-def get_data(args, preprocess_fns, model_type, tokenize=None):
+def get_data(args, preprocess_fns, model_type, tokenize=None, **kwargs):
     if model_type == 'clip':
-        return get_clip_data(args, preprocess_fns)
+        return get_clip_data(args, preprocess_fns, **kwargs)
     elif model_type == 'dalle':
         # assert tokenize is not None, "dalle tokenizer is part of model config"
-        return get_dalle_data(args, preprocess_fns, tokenize)
+        return get_dalle_data(args, preprocess_fns, tokenize, **kwargs)
     elif model_type == 'glide':
-        return get_glide_data(args, preprocess_fns, tokenize)
+        return get_glide_data(args, preprocess_fns, tokenize, **kwargs)
     else:
         print("either get_data method is not implemented or you shouldn't be using it")
         raise NotImplementedError
