@@ -62,6 +62,7 @@ CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 nohup python train.py \
 
 ## Inference using finetuned model
 Run the following command to save the generation of validation prompts, and also reports the clip-score for the validation
+The validation dir is found under the unzipped data file, that you can download from our provided link.
 ```
 cd dalle-mini-custom/tools/inference
 python inference.py path_to_validation_dir
