@@ -33,11 +33,11 @@ CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 nohup python train.py \
     --dataset_repo_or_path ../src/encoded_data \
     --warmup_steps 1\
     --streaming True \
-    --learning_rate 0.0005\
+    --learning_rate 0.00005\
     --num_train_epochs 3\
     --do_train True \
     --do_eval True \
-    --output_dir ../subset_finetuned_model_lr4_adafactor &
+    --output_dir ../aug_finetuned_model1_lr5_5k &
 ```
 ### To train on 40k Custom dataset using default params
 1. first follow the Dataset section to properly download and encode the dataset
@@ -57,7 +57,7 @@ CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 nohup python train.py \
     --num_train_epochs 3\
     --do_train True \
 <!--     --do_eval True \ -->
-    --output_dir ../subset_finetuned_model_lr4_adafactor &
+    --output_dir ../aug_finetuned_model1_lr4_adafactor &
 ```
 
 
