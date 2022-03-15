@@ -20,7 +20,7 @@ cd dalle-mini-custom/tools/src
 python encode_dataset_dallemini.py
 ```
 
-## Training & Finetuning DALLE
+## Training & Finetuning DALLE-mini
 
 ### To directly train on 5k UCI dataset using default params
 
@@ -60,13 +60,15 @@ CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 nohup python train.py \
     --output_dir ../aug_finetuned_model1_lr4_adafactor &
 ```
 
-## Inference using finetuned model
+## Inference using finetuned DALLE-mini model
 Run the following command to save the generation of validation prompts, and also reports the clip-score for the validation
 The validation dir is found under the unzipped data file, that you can download from our provided link.
 ```
 cd dalle-mini-custom/tools/inference
 python inference.py path_to_validation_dir
 ```
+
+### note, our code is based on the training script from dalle-mini repo: https://github.com/borisdayma/dalle-mini;
 
 ## Evaluation
 
