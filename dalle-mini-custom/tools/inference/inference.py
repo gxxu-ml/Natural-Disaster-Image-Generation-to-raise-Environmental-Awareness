@@ -38,7 +38,7 @@ folders = [ "aug_finetuned_model1_lr2_adafactor",
            "aug_finetuned_model1_lr5_5k", "aug_finetuned_model1_lr5_adafactor"]
 folders = ["ori"]
 folders = ["subset_finetuned_model_lr3_adafactor","subset_finetuned_model_lr4_adafactor","subset_finetuned_model_lr5_adafactor"]
-
+folders = ["aug_finetuned_model1_lr5_5k"]
 
 ##################
 
