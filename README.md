@@ -39,14 +39,17 @@ cd ./data/data40k/
 ### Train
 UCI-5k data
 ```
+cd ./src/
 CUDA_VISIBLE_DEVICES=0,1,2,3 OPENAI_LOGDIR=[LOG_DIR] mpiexec -n 4 python main_glide.py --data_dir  ../data/multimodal
 ```
 Custom data 50k
 ```
+cd ./src/
 CUDA_VISIBLE_DEVICES=0,1,2,3 OPENAI_LOGDIR=[LOG_DIR] mpiexec -n 4 python main_glide.py
 ```
 ### Inference
 ```
+cd ./src/
 CUDA_VISIBLE_DEVICES=0,1,2,3 mpiexec -n 4 python sample_glide.py --ckpt [runname] --ckpt_dir [checkpoint parent directory] --save_dir [save results parent directory]
 ```
 
