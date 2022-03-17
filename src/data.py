@@ -89,7 +89,7 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, idx):
         image = self.transforms(Image.open(
-            os.path.join(self.data_dir, str(self.images[idx]))))
+            os.path.join(self.data_dir, str(self.images[idx]))).convert("RGB"))
         if self.permute:
             image = image.permute(1, 2, 0)
 
@@ -117,7 +117,7 @@ class GeneralCustomDataset(CustomDataset):
         # print(start_index, end_index)
         
     def __getitem__(self, idx):
-        image = Image.open(os.path.join(self.data_dir, str(self.images[idx])))
+        image = Image.open(os.path.join(self.data_dir, str(self.images[idx]))).convert("RGB")
         if self.transforms is not None:
             image = self.transforms(image)
         if self.permute:

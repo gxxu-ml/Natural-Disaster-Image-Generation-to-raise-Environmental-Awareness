@@ -32,15 +32,17 @@ def main():
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--ckpt', type=str, default=None)
-    parser.add_argument('--ckpt_step', type=int, default=11000)
+    parser.add_argument('--ckpt_step', type=int, default=1500)
     parser.add_argument('--ckpt_dir', type=str, default="/home/andrewbai/glide_logs/")
-    parser.add_argument('--val_path', type=str, default="../data/data40k/validation.txt")
+    parser.add_argument('--val_path', type=str, default="validation.txt")
     parser.add_argument('--data_dir', type=str, default="../data/data40k/")
     parser.add_argument('--save_dir', type=str, default="/home/andrewbai/glide_samples/")
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--num_test_samples', type=int, default=200)
     
     args = parser.parse_args()
+
+    args.val_path = os.path.join(args.data_dir, args.val_path)
     
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     

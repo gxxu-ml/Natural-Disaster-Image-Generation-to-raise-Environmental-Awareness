@@ -191,7 +191,6 @@ def create_model_and_diffusion(
 
 def load_data(args, tokenizer):
     
-    # TODO: check preprocessing correct or not
     train_transform = transforms.Compose([
         transforms.RandomHorizontalFlip(),
         RandomCropLongEdge(),
@@ -229,23 +228,22 @@ def create_argparser():
     defaults = model_and_diffusion_defaults()
     defaults.update(dict(
         # train args
-        # log_dir="/home/andrewbai/glide_logs",
         # image_size=256,
         # noised=True,
         epochs=5,
         iterations=15000, # 150000, basically useless in this case
         schedule_sampler="uniform",
         optimizer='adamw',
-        lr=1e-4,
+        lr=1e-5,
         anneal_lr=False,
         lr_anneal_steps=0,
-        weight_decay=0.0,
-        batch_size=8,
-        microbatch=-1,  # -1 disables microbatches
+        weight_decay=0.05,
+        batch_size=32,
+        microbatch=16,  # -1 disables microbatches
         ema_rate="0.9999",  # comma-separated list of EMA values
         log_interval=10,
         # eval_interval=5,
-        save_interval=10000,
+        save_interval=1500,
         resume_checkpoint="",
         resume_pretrained=True,
         learn_sigma=True,
@@ -257,8 +255,8 @@ def create_argparser():
         fp16_scale_growth=1e-3,
         # data args
         data_dir="../data/data40k",
-        train_filename="../data/data40k/train.txt",
-        valid_filename="../data/data40k/validation.txt",
+        train_filename="train.txt",
+        valid_filename="validation.txt",
         img_key="images",
         caption_key="captions",
         csv_separator=" ",
@@ -272,6 +270,8 @@ def main():
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     
     args = create_argparser().parse_args()
+    args.train_filename = os.path.join(args.data_dir, args.train_filename)
+    args.valid_filename = os.path.join(args.data_dir, args.valid_filename)
     
     # hack for keeping external settings on CUDA_VISIBLE_DEVICES
     setup_dist()
