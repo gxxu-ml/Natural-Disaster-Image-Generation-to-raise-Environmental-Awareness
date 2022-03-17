@@ -14,6 +14,7 @@ git submodule update --init --recursive
 
 Setup conda environment with 
 ```
+pip install git+https://github.com/borisdayma/dalle-mini.git
 conda env create -f env.yaml -n disaster-t2i
 conda activate disaster-t2i
 ```
