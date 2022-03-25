@@ -50,7 +50,7 @@ class RandomCropLongEdge(object):
               else np.random.randint(low=0,high=img.size[0] - size[0]))
         j = (0 if size[1] == img.size[1]
               else np.random.randint(low=0,high=img.size[1] - size[1]))
-        return T.functional.crop(img, i, j, size[0], size[1])
+        return T.functional.crop(img, j, i, size[1], size[0])
 
     def __repr__(self):
         return self.__class__.__name__
